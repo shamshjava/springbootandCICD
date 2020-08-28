@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -17,6 +18,8 @@ import com.alam.springbootwithcicd.dao.EmployeeRepo;
 import com.alam.springbootwithcicd.exception.ResourceNotFoundException;
 import com.alam.springbootwithcicd.model.Employee;
 
+
+@CrossOrigin(origins = { "http://localhost:3000", "http://localhost:4200" })
 @RestController
 public class EmployeeController {
 	
@@ -44,7 +47,7 @@ public class EmployeeController {
 	// Create a new Employee
 	@PostMapping("/employee")
 	public Employee createEmployee(@Validated @RequestBody Employee employee) {
-		System.out.println("Create Employee");
+		System.out.println("Create Employee>>>"+ employee.getEmpName());
 	    return empRepo.save(employee);
 	}
 	
@@ -55,7 +58,7 @@ public class EmployeeController {
 
 		Employee emp = empRepo.findById(empId)
 	            .orElseThrow(() -> new ResourceNotFoundException("Employee", "empId", empId));
-
+		System.out.println("Create details>>>"+ empDetails.getEmpName());
 		emp.setEmpName(empDetails.getEmpName());
 		emp.setEmpAddress(empDetails.getEmpAddress());
 		emp.setEmpSalary(empDetails.getEmpSalary());
@@ -66,7 +69,7 @@ public class EmployeeController {
 	
 	// Delete a Employee
 	@DeleteMapping("/employee/{empId}")
-	public ResponseEntity<?> deleteNote(@PathVariable(value = "empId") Integer empId) {
+	public ResponseEntity<?> deleteEmployee(@PathVariable(value = "empId") Integer empId) {
 		Employee emp = empRepo.findById(empId)
 	            .orElseThrow(() -> new ResourceNotFoundException("Employee", "empId", empId));
 
@@ -74,4 +77,11 @@ public class EmployeeController {
 
 	    return ResponseEntity.ok().build();
 	}
+	
+	// Delete all Employee
+		@DeleteMapping("/employee")
+		public ResponseEntity<?> deleteAllEmployee() {
+			empRepo.deleteAll();
+		    return ResponseEntity.ok().build();
+		}
 }
